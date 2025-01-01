@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 
 	"github.com/libvirt/libvirt-go"
-	"github.com/libvirt/libvirt-go-xml"
+	libvirtxml "github.com/libvirt/libvirt-go-xml"
 )
 
 type domainMemoryStats struct {
@@ -26,7 +26,6 @@ type domainMemoryStats struct {
 }
 
 func getDomainMemoryStats(ctx context.Context, d *libvirt.Domain) (domainMemoryStats, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	var m domainMemoryStats
@@ -69,7 +68,6 @@ func getDomainMemoryStats(ctx context.Context, d *libvirt.Domain) (domainMemoryS
 }
 
 func setDomainCurrentMemory(ctx context.Context, d *libvirt.Domain, mem uint64) error {
-
 	id := getReqIDFromContext(ctx)
 
 	flags := libvirt.DOMAIN_MEM_CURRENT
@@ -93,7 +91,6 @@ func setDomainCurrentMemory(ctx context.Context, d *libvirt.Domain, mem uint64) 
 }
 
 func setDomainMemoryStatsPeriod(ctx context.Context, d *libvirt.Domain, period int) error {
-
 	id := getReqIDFromContext(ctx)
 
 	flags := libvirt.DOMAIN_MEM_CURRENT
@@ -117,7 +114,6 @@ func setDomainMemoryStatsPeriod(ctx context.Context, d *libvirt.Domain, period i
 }
 
 func getDomainMemoryStatsPeriod(ctx context.Context, d *libvirt.Domain) (uint, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	xmlDoc, err := d.GetXMLDesc(0)
@@ -156,7 +152,6 @@ func getDomainMemoryStatsPeriod(ctx context.Context, d *libvirt.Domain) (uint, e
 }
 
 func setDomainMaxMemory(ctx context.Context, d *libvirt.Domain, mem uint64) error {
-
 	id := getReqIDFromContext(ctx)
 
 	flags := libvirt.DOMAIN_MEM_CONFIG | libvirt.DOMAIN_MEM_MAXIMUM
@@ -172,7 +167,6 @@ func setDomainMaxMemory(ctx context.Context, d *libvirt.Domain, mem uint64) erro
 }
 
 // func getNodeMemoryStats(ctx context.Context, c *libvirt.Connect) (*libvirt.NodeMemoryStats, error) {
-
 // 	id := getReqIDFromContext(ctx)
 
 // 	memStats, err := c.GetMemoryStats(-1, 0)
@@ -191,12 +185,11 @@ func setDomainMaxMemory(ctx context.Context, d *libvirt.Domain, mem uint64) erro
 // }
 
 func getNodeMemoryStats(ctx context.Context) (nodeMemoryStats, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	var err error
 
-	data, err := ioutil.ReadFile("/proc/meminfo")
+	data, err := os.ReadFile("/proc/meminfo")
 	if err != nil {
 		fail.Printf("%sfailed to parse /proc/meminfo: %s\n", id, err.Error())
 		return nodeMemoryStats{}, fmt.Errorf("failed to parse /proc/meminfo: %s", err.Error())
@@ -207,7 +200,6 @@ func getNodeMemoryStats(ctx context.Context) (nodeMemoryStats, error) {
 	lines := strings.Split(string(data), "\n")
 
 	for _, line := range lines {
-
 		fields := strings.SplitN(line, ":", 2)
 		if len(fields) < 2 {
 			continue
@@ -241,7 +233,6 @@ func getNodeMemoryStats(ctx context.Context) (nodeMemoryStats, error) {
 		case strings.ToUpper("SwapCached"):
 			memInfo.SwapCached = val
 		}
-
 	}
 
 	/* if kb_main_available is greater than kb_main_total or our calculation of
@@ -265,7 +256,6 @@ func getNodeMemoryStats(ctx context.Context) (nodeMemoryStats, error) {
 }
 
 func isMemoryAvailable(ctx context.Context, c *libvirt.Connect, memory uint) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	maxMemory := 2 * memory

@@ -9,7 +9,6 @@ import (
 )
 
 func getDomainMaxVCPUs(ctx context.Context, d *libvirt.Domain) uint64 {
-
 	id := getReqIDFromContext(ctx)
 
 	i, err := d.GetMaxVcpus()
@@ -23,7 +22,6 @@ func getDomainMaxVCPUs(ctx context.Context, d *libvirt.Domain) uint64 {
 }
 
 func getDomainCurrentVCPUs(ctx context.Context, d *libvirt.Domain) uint64 {
-
 	id := getReqIDFromContext(ctx)
 
 	i, err := d.GetVcpusFlags(libvirt.DOMAIN_VCPU_CURRENT)
@@ -37,7 +35,6 @@ func getDomainCurrentVCPUs(ctx context.Context, d *libvirt.Domain) uint64 {
 }
 
 func setDomainCurrentVCPUs(ctx context.Context, d *libvirt.Domain, vCPUNum uint) error {
-
 	id := getReqIDFromContext(ctx)
 
 	flags := libvirt.DOMAIN_VCPU_CURRENT
@@ -61,7 +58,6 @@ func setDomainCurrentVCPUs(ctx context.Context, d *libvirt.Domain, vCPUNum uint)
 }
 
 func setDomainMaxVCPUs(ctx context.Context, d *libvirt.Domain, vCPUNum uint) error {
-
 	id := getReqIDFromContext(ctx)
 
 	flags := libvirt.DOMAIN_VCPU_CONFIG | libvirt.DOMAIN_VCPU_MAXIMUM | libvirt.DOMAIN_VCPU_HOTPLUGGABLE
@@ -77,7 +73,6 @@ func setDomainMaxVCPUs(ctx context.Context, d *libvirt.Domain, vCPUNum uint) err
 }
 
 func getNodeCPUStats(ctx context.Context, c *libvirt.Connect) (*libvirt.NodeCPUStats, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	cpuStats, err := c.GetCPUStats(-1, 0)
@@ -96,7 +91,6 @@ func getNodeCPUStats(ctx context.Context, c *libvirt.Connect) (*libvirt.NodeCPUS
 }
 
 func getNumOfAssignedNodeVCPUs(ctx context.Context, c *libvirt.Connect) (uint32, error) {
-
 	var count int32
 
 	id := getReqIDFromContext(ctx)
@@ -120,7 +114,6 @@ func getNumOfAssignedNodeVCPUs(ctx context.Context, c *libvirt.Connect) (uint32,
 }
 
 func isVCPUAvailable(ctx context.Context, c *libvirt.Connect, vCPU int) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	nodeInfo, err := getNodeInfo(ctx, c)

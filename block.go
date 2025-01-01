@@ -7,13 +7,14 @@ import (
 )
 
 /* global variable declaration, if any... */
-const domainBlockJobTypeActiveCommit = "DOMAIN_BLOCK_JOB_TYPE_ACTIVE_COMMIT"
-const domainBlockJobTypeCommit = "DOMAIN_BLOCK_JOB_TYPE_COMMIT"
-const domainBlockJobTypeCopy = "DOMAIN_BLOCK_JOB_TYPE_COPY"
-const domainBlockJobTypePull = "DOMAIN_BLOCK_JOB_TYPE_PULL"
+const (
+	domainBlockJobTypeActiveCommit = "DOMAIN_BLOCK_JOB_TYPE_ACTIVE_COMMIT"
+	domainBlockJobTypeCommit       = "DOMAIN_BLOCK_JOB_TYPE_COMMIT"
+	domainBlockJobTypeCopy         = "DOMAIN_BLOCK_JOB_TYPE_COPY"
+	domainBlockJobTypePull         = "DOMAIN_BLOCK_JOB_TYPE_PULL"
+)
 
 func getDomainBlockJobInfo(ctx context.Context, d *libvirt.Domain, disk string) (blockJobInfo, error) {
-
 	var jobInfo blockJobInfo
 
 	id := getReqIDFromContext(ctx)
@@ -47,7 +48,6 @@ func getDomainBlockJobInfo(ctx context.Context, d *libvirt.Domain, disk string) 
 }
 
 func setDomainBlockIoTune(ctx context.Context, d *libvirt.Domain, dev string, read uint64, write uint64) error {
-
 	id := getReqIDFromContext(ctx)
 
 	flags := libvirt.DOMAIN_AFFECT_CURRENT
@@ -91,7 +91,6 @@ virsh help blkdeviotune
 TEST: fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=test --filename=test --bs=4k --iodepth=64 --size=8G --readwrite=randwrite --runtime=60
 */
 func getDomainBlockIoTune(ctx context.Context, d *libvirt.Domain, dev string, flags libvirt.DomainModificationImpact) blockIO {
-
 	id := getReqIDFromContext(ctx)
 
 	var ret blockIO
@@ -140,7 +139,6 @@ func getDomainBlockIoTune(ctx context.Context, d *libvirt.Domain, dev string, fl
 
 // virsh help blkiotune
 func getDomainBlkioParams(ctx context.Context, d *libvirt.Domain, flags libvirt.DomainModificationImpact) blockParams {
-
 	id := getReqIDFromContext(ctx)
 
 	var ret blockParams

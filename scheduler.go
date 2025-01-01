@@ -7,7 +7,6 @@ import (
 )
 
 func setDomainSchedulerCPUShares(ctx context.Context, d *libvirt.Domain, CPUShares uint64) error {
-
 	id := getReqIDFromContext(ctx)
 
 	flags := libvirt.DOMAIN_AFFECT_CURRENT
@@ -36,7 +35,6 @@ func setDomainSchedulerCPUShares(ctx context.Context, d *libvirt.Domain, CPUShar
 
 // virsh help schedinfo
 func getDomainSchedulerInfo(ctx context.Context, d *libvirt.Domain, flags libvirt.DomainModificationImpact) (schedulerInfo, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	var ret schedulerInfo

@@ -7,15 +7,16 @@ import (
 	"strings"
 
 	"github.com/libvirt/libvirt-go"
-	"github.com/libvirt/libvirt-go-xml"
+	libvirtxml "github.com/libvirt/libvirt-go-xml"
 )
 
 func findNodePFName(ctx context.Context, c *libvirt.Connect, pfPciName string) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
-	var err error
-	var pciName, pciParentName, pfName string
+	var (
+		err                            error
+		pciName, pciParentName, pfName string
+	)
 
 	devs, err := listNodeNetworkDevices(ctx, c)
 	defer freeNodeDevices(ctx, devs)
@@ -24,7 +25,6 @@ func findNodePFName(ctx context.Context, c *libvirt.Connect, pfPciName string) (
 	}
 
 	for _, dev := range devs {
-
 		xml, err := dev.GetXMLDesc(0)
 		if err != nil {
 			fail.Printf("%sfailed to get device XML: %s\n", id, err.Error())
@@ -64,7 +64,6 @@ func findNodePFName(ctx context.Context, c *libvirt.Connect, pfPciName string) (
 }
 
 func getNodePFInfo(ctx context.Context, c *libvirt.Connect, vfPciName string) (string, string, string) {
-
 	id := getReqIDFromContext(ctx)
 
 	var pfPciName, pfPci, desc string
@@ -123,7 +122,6 @@ func getNodePFInfo(ctx context.Context, c *libvirt.Connect, vfPciName string) (s
 }
 
 func getNetworkVFCount(ctx context.Context, c *libvirt.Connect, n *libvirt.Network) (int, int, error) {
-
 	netHostDevPciDevices, err := getInterfacesFromNetwork(ctx, n)
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to get list of interfaces: %s", err.Error())
@@ -149,7 +147,6 @@ func getNetworkVFCount(ctx context.Context, c *libvirt.Connect, n *libvirt.Netwo
 }
 
 func getNetworkNameForVFAddress(ctx context.Context, c *libvirt.Connect, vfAddr string) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	var name string
@@ -162,9 +159,10 @@ func getNetworkNameForVFAddress(ctx context.Context, c *libvirt.Connect, vfAddr 
 
 NetworksLoop:
 	for _, net := range networks {
-
-		var netHostDevPciDevices []string
-		var err error
+		var (
+			netHostDevPciDevices []string
+			err                  error
+		)
 
 		name, err = getNetworkName(ctx, &net)
 		if err != nil {
@@ -182,7 +180,6 @@ NetworksLoop:
 				break NetworksLoop
 			}
 		}
-
 	}
 
 	if len(name) == 0 {
@@ -194,7 +191,6 @@ NetworksLoop:
 }
 
 func getInterfacesFromNetwork(ctx context.Context, net *libvirt.Network) ([]string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	netHostDevPciDevices := make([]string, 0)
@@ -239,7 +235,6 @@ func getInterfacesFromNetwork(ctx context.Context, net *libvirt.Network) ([]stri
 }
 
 func isNetworkVFAvailable(ctx context.Context, c *libvirt.Connect, network string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	if len(network) == 0 {

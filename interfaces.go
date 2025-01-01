@@ -10,11 +10,10 @@ import (
 	"strings"
 
 	"github.com/libvirt/libvirt-go"
-	"github.com/libvirt/libvirt-go-xml"
+	libvirtxml "github.com/libvirt/libvirt-go-xml"
 )
 
 func isInterfacePassthroughPCIDevice(ctx context.Context, dev libvirtxml.DomainInterface) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	if dev.Source != nil && dev.MAC != nil && strings.ToLower(dev.Managed) == yes {
@@ -33,7 +32,6 @@ func isInterfacePassthroughPCIDevice(ctx context.Context, dev libvirtxml.DomainI
 }
 
 func getDomainInterfaces(ctx context.Context, d *libvirt.Domain) ([]libvirtxml.DomainInterface, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	xml, err := d.GetXMLDesc(0)
@@ -66,7 +64,6 @@ func getDomainInterfaces(ctx context.Context, d *libvirt.Domain) ([]libvirtxml.D
 }
 
 func getDomainsNetworkDevices(ctx context.Context, c *libvirt.Connect) ([]string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	netDomainPciDevices := make([]string, 0)
@@ -78,7 +75,6 @@ func getDomainsNetworkDevices(ctx context.Context, c *libvirt.Connect) ([]string
 	}
 
 	for _, d := range domains {
-
 		interfaces, err := getDomainInterfaces(ctx, &d)
 		if err != nil {
 			continue
@@ -103,15 +99,15 @@ func getDomainsNetworkDevices(ctx context.Context, c *libvirt.Connect) ([]string
 }
 
 func setPVIDForDomainNetworkDevice(ctx context.Context, d *libvirt.Domain, mac string, pvid uint) (bool, error) {
-
 	// Achtung: only for domain in shutdown state!
-
 	id := getReqIDFromContext(ctx)
 
-	var nicOld, nicNew libvirtxml.DomainInterface
-	var vlan libvirtxml.DomainInterfaceVLan
-	var xmlOld, xmlNew string
-	var err error
+	var (
+		nicOld, nicNew libvirtxml.DomainInterface
+		vlan           libvirtxml.DomainInterfaceVLan
+		xmlOld, xmlNew string
+		err            error
+	)
 
 	ok, err := isMACvalid(ctx, mac)
 	if err != nil || !ok {
@@ -215,7 +211,6 @@ func setPVIDForDomainNetworkDevice(ctx context.Context, d *libvirt.Domain, mac s
 }
 
 func getDomainInterfaceInfo(ctx context.Context, d *libvirt.Domain) ([]netInfo, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	nics, err := getDomainInterfaces(ctx, d)
@@ -232,9 +227,10 @@ func getDomainInterfaceInfo(ctx context.Context, d *libvirt.Domain) ([]netInfo, 
 	Nets := make([]netInfo, 0, len(nics))
 
 	for _, dev := range nics {
-
-		var vfPCIAddr, vfPCIName string
-		var Net netInfo
+		var (
+			vfPCIAddr, vfPCIName string
+			Net                  netInfo
+		)
 
 		Net.Metadata, err = getDomainMetadata(ctx, d)
 		if err != nil {
@@ -334,7 +330,6 @@ func getDomainInterfaceInfo(ctx context.Context, d *libvirt.Domain) ([]netInfo, 
 			if err != nil {
 				continue
 			}
-
 		}
 
 		Nets = append(Nets, Net)

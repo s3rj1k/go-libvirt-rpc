@@ -16,14 +16,13 @@ import (
 
 /* global variable declaration, if any... */
 
-// const no = "no"
-// const on = "on"
-
-const off = "off"
-const undefined = "undefined"
-const unknown = "unknown"
-const yes = "yes"
-const app = "libvirt-jrpc"
+const (
+	off       = "off"
+	undefined = "undefined"
+	unknown   = "unknown"
+	yes       = "yes"
+	app       = "libvirt-jrpc"
+)
 
 // JRPCService - zenrpc.Service struct
 type JRPCService struct{ zenrpc.Service }
@@ -43,7 +42,6 @@ var (
 )
 
 func init() {
-
 	if runtime.NumCPU() > 1 {
 		runtime.GOMAXPROCS(2)
 	}
@@ -67,12 +65,12 @@ func init() {
 	flag.Parse()
 
 	if *logToFilePtr {
-		mainLog, err := os.OpenFile(fmt.Sprintf("/var/log/%s-main.log", app), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+		mainLog, err := os.OpenFile(fmt.Sprintf("/var/log/%s-main.log", app), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0o600)
 		if err != nil {
 			log.Fatalf("Failed to open log file: %s", err.Error())
 		}
 
-		errorsLog, err := os.OpenFile(fmt.Sprintf("/var/log/%s-errors.log", app), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+		errorsLog, err := os.OpenFile(fmt.Sprintf("/var/log/%s-errors.log", app), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0o600)
 		if err != nil {
 			log.Fatalf("Failed to open log file: %s", err.Error())
 		}
@@ -83,11 +81,9 @@ func init() {
 		info = log.New(os.Stdout, "INF: ", log.LstdFlags|log.Lshortfile)
 		fail = log.New(os.Stdout, "ERR: ", log.LstdFlags|log.Lshortfile)
 	}
-
 }
 
 func main() {
-
 	info.Printf("Build Date: %s, Git Branch: %s, Git State: %s, Git Commit: %s", buildDate, gitBranch, gitState, gitCommit)
 
 	jrpc := zenrpc.NewServer(zenrpc.Options{
@@ -103,7 +99,6 @@ func main() {
 	jrpc.Use(logger())
 
 	if len(*socket) == 0 {
-
 		mux := http.NewServeMux()
 		mux.Handle("/jrpc", jrpc)
 		mux.Handle("/", loggingHandler(http.FileServer(http.Dir("ui"))))
@@ -114,9 +109,7 @@ func main() {
 		if err != nil {
 			fail.Fatalf("JRPC server crashed: %s", err.Error())
 		}
-
 	} else {
-
 		http.Handle("/jrpc", jrpc)
 		http.Handle("/", loggingHandler(http.FileServer(http.Dir("ui"))))
 
@@ -127,7 +120,7 @@ func main() {
 			fail.Fatalf("JRPC server crashed: %s", err.Error())
 		}
 
-		if err := os.Chmod(*socket, 0777); err != nil {
+		if err := os.Chmod(*socket, 0o777); err != nil {
 			fail.Fatalf("JRPC server crashed: %s", err.Error())
 		}
 
@@ -135,6 +128,5 @@ func main() {
 		if err != nil {
 			fail.Fatalf("JRPC server crashed: %s", err.Error())
 		}
-
 	}
 }

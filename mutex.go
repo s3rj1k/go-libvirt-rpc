@@ -10,7 +10,6 @@ import (
 var isLocked sync.Map
 
 func isLockedAndMakeLock(ctx context.Context, hash string, count int) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	defer isLocked.Delete(hash)
@@ -35,7 +34,6 @@ func isLockedAndMakeLock(ctx context.Context, hash string, count int) bool {
 	info.Printf("%stemporary lock in effect for %s, waiting...\n", id, hash)
 
 	for i := 1; i <= count; i++ {
-
 		time.Sleep(1 * time.Second)
 
 		info.Printf("%schecking for temporary lock %d/%d on %s\n", id, i, count, hash)
@@ -56,7 +54,6 @@ func isLockedAndMakeLock(ctx context.Context, hash string, count int) bool {
 			info.Printf("%sno lock for %s, continuing...\n", id, hash)
 			return false
 		}
-
 	}
 
 	info.Printf("%slock in effect for %s, try again later\n", id, hash)
@@ -64,7 +61,6 @@ func isLockedAndMakeLock(ctx context.Context, hash string, count int) bool {
 }
 
 func removeLock(ctx context.Context, hash string) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	info.Printf("%sremoving temporary lock for %s\n", id, hash)
@@ -76,7 +72,6 @@ func removeLock(ctx context.Context, hash string) bool {
 }
 
 func addLock(ctx context.Context, hash string) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	info.Printf("%sadding temporary lock for %s\n", id, hash)
@@ -88,7 +83,6 @@ func addLock(ctx context.Context, hash string) bool {
 }
 
 func listLocks(ctx context.Context) []string {
-
 	id := getReqIDFromContext(ctx)
 
 	locks := make([]string, 0)

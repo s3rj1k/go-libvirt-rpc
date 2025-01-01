@@ -7,11 +7,10 @@ import (
 	"path/filepath"
 
 	"github.com/libvirt/libvirt-go"
-	"github.com/libvirt/libvirt-go-xml"
+	libvirtxml "github.com/libvirt/libvirt-go-xml"
 )
 
 func listStorgePools(ctx context.Context, c *libvirt.Connect, flags libvirt.ConnectListAllStoragePoolsFlags) ([]libvirt.StoragePool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	pools, err := c.ListAllStoragePools(flags)
@@ -25,7 +24,6 @@ func listStorgePools(ctx context.Context, c *libvirt.Connect, flags libvirt.Conn
 }
 
 func listAllStorgeVolumesInPool(ctx context.Context, p *libvirt.StoragePool) ([]libvirt.StorageVol, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	volumes, err := p.ListAllStorageVolumes(0)
@@ -39,7 +37,6 @@ func listAllStorgeVolumesInPool(ctx context.Context, p *libvirt.StoragePool) ([]
 }
 
 func countNumOfStorageVolumesInPool(ctx context.Context, p *libvirt.StoragePool) (int, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	count, err := p.NumOfStorageVolumes()
@@ -53,7 +50,6 @@ func countNumOfStorageVolumesInPool(ctx context.Context, p *libvirt.StoragePool)
 }
 
 func refreshPool(ctx context.Context, p *libvirt.StoragePool) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := p.Refresh(0)
@@ -67,7 +63,6 @@ func refreshPool(ctx context.Context, p *libvirt.StoragePool) error {
 }
 
 func refreshAllStorgePools(ctx context.Context, c *libvirt.Connect) error {
-
 	id := getReqIDFromContext(ctx)
 
 	// here we acquire only directory based pools
@@ -92,7 +87,6 @@ func refreshAllStorgePools(ctx context.Context, c *libvirt.Connect) error {
 }
 
 func getPoolName(ctx context.Context, p *libvirt.StoragePool) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	name, err := p.GetName()
@@ -106,7 +100,6 @@ func getPoolName(ctx context.Context, p *libvirt.StoragePool) (string, error) {
 }
 
 func listPoolVolumes(ctx context.Context, p *libvirt.StoragePool) ([]string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	volumes, err := p.ListStorageVolumes()
@@ -120,7 +113,6 @@ func listPoolVolumes(ctx context.Context, p *libvirt.StoragePool) ([]string, err
 }
 
 func lookupStorageVolByPath(ctx context.Context, c *libvirt.Connect, path string) (*libvirt.StorageVol, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	vol, err := c.LookupStorageVolByPath(path)
@@ -134,7 +126,6 @@ func lookupStorageVolByPath(ctx context.Context, c *libvirt.Connect, path string
 }
 
 func lookupPoolByVolume(ctx context.Context, vol *libvirt.StorageVol) (*libvirt.StoragePool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	pool, err := vol.LookupPoolByVolume()
@@ -148,7 +139,6 @@ func lookupPoolByVolume(ctx context.Context, vol *libvirt.StorageVol) (*libvirt.
 }
 
 func lookupPoolByName(ctx context.Context, c *libvirt.Connect, name string) (*libvirt.StoragePool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	pool, err := c.LookupStoragePoolByName(name)
@@ -162,7 +152,6 @@ func lookupPoolByName(ctx context.Context, c *libvirt.Connect, name string) (*li
 }
 
 func getVolumePath(ctx context.Context, v *libvirt.StorageVol) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	path, err := v.GetPath()
@@ -176,7 +165,6 @@ func getVolumePath(ctx context.Context, v *libvirt.StorageVol) (string, error) {
 }
 
 func deletePoolVolume(ctx context.Context, v *libvirt.StorageVol, flags libvirt.StorageVolDeleteFlags) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := v.Delete(flags)
@@ -190,7 +178,6 @@ func deletePoolVolume(ctx context.Context, v *libvirt.StorageVol, flags libvirt.
 }
 
 func cloneVolumeByPath(ctx context.Context, c *libvirt.Connect, storage, leftImageName, rightImageName string) error {
-
 	id := getReqIDFromContext(ctx)
 
 	pool, err := lookupPoolByName(ctx, c, storage)
@@ -267,7 +254,6 @@ func cloneVolumeByPath(ctx context.Context, c *libvirt.Connect, storage, leftIma
 }
 
 func getPoolPath(ctx context.Context, p *libvirt.StoragePool) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	xml, err := p.GetXMLDesc(libvirt.StorageXMLFlags(0))
@@ -295,7 +281,6 @@ func getPoolPath(ctx context.Context, p *libvirt.StoragePool) (string, error) {
 }
 
 func getPoolInfo(ctx context.Context, p *libvirt.StoragePool) (*libvirt.StoragePoolInfo, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	poolInfo, err := p.GetInfo()
@@ -309,7 +294,6 @@ func getPoolInfo(ctx context.Context, p *libvirt.StoragePool) (*libvirt.StorageP
 }
 
 func isPoolAutostarted(ctx context.Context, p *libvirt.StoragePool) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	isAutostarted, err := p.GetAutostart()
@@ -323,7 +307,6 @@ func isPoolAutostarted(ctx context.Context, p *libvirt.StoragePool) (bool, error
 }
 
 func isPoolActive(ctx context.Context, p *libvirt.StoragePool) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	isActive, err := p.IsActive()
@@ -337,7 +320,6 @@ func isPoolActive(ctx context.Context, p *libvirt.StoragePool) (bool, error) {
 }
 
 func isPoolPersistent(ctx context.Context, p *libvirt.StoragePool) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	isPersistent, err := p.IsPersistent()
@@ -351,7 +333,6 @@ func isPoolPersistent(ctx context.Context, p *libvirt.StoragePool) (bool, error)
 }
 
 func freeVolumes(ctx context.Context, v []libvirt.StorageVol) {
-
 	id := getReqIDFromContext(ctx)
 
 	for _, e := range v {
@@ -365,7 +346,6 @@ func freeVolumes(ctx context.Context, v []libvirt.StorageVol) {
 }
 
 func freeVolume(ctx context.Context, v *libvirt.StorageVol) {
-
 	id := getReqIDFromContext(ctx)
 
 	err := v.Free()
@@ -377,7 +357,6 @@ func freeVolume(ctx context.Context, v *libvirt.StorageVol) {
 }
 
 func freePools(ctx context.Context, p []libvirt.StoragePool) {
-
 	id := getReqIDFromContext(ctx)
 
 	for _, e := range p {
@@ -391,7 +370,6 @@ func freePools(ctx context.Context, p []libvirt.StoragePool) {
 }
 
 func freePool(ctx context.Context, p *libvirt.StoragePool) {
-
 	id := getReqIDFromContext(ctx)
 
 	err := p.Free()
@@ -403,7 +381,6 @@ func freePool(ctx context.Context, p *libvirt.StoragePool) {
 }
 
 func isStorageAvailable(ctx context.Context, c *libvirt.Connect, poolName string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	if len(poolName) == 0 {
@@ -437,7 +414,6 @@ func isStorageAvailable(ctx context.Context, c *libvirt.Connect, poolName string
 }
 
 func isTemplateInsideStorageAvailable(ctx context.Context, c *libvirt.Connect, storage, template string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	pool, err := lookupPoolByName(ctx, c, storage)
@@ -463,7 +439,6 @@ func isTemplateInsideStorageAvailable(ctx context.Context, c *libvirt.Connect, s
 }
 
 func lookupStorageVolByName(ctx context.Context, c *libvirt.Connect, p *libvirt.StoragePool, name string) (*libvirt.StorageVol, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	vol, err := p.LookupStorageVolByName(name)

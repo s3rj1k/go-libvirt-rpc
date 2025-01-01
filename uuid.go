@@ -10,7 +10,6 @@ import (
 
 // https://en.wikipedia.org/wiki/Universally_unique_identifier {Version 4 (random)}
 func genUUID(ctx context.Context) string {
-
 	id := getReqIDFromContext(ctx)
 
 	u := make([]byte, 16)
@@ -34,7 +33,6 @@ func genUUID(ctx context.Context) string {
 }
 
 func isUUIDValid(ctx context.Context, uuid string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	uuidPattern := "^([0-9]|[abcdef]|[ABCDEF]){8}-([0-9]|[abcdef]|[ABCDEF]){4}-([0-9]|[abcdef]|[ABCDEF]){4}-([0-9]|[abcdef]|[ABCDEF]){4}-([0-9]|[abcdef]|[ABCDEF]){12}$"

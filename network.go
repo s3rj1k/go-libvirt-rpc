@@ -8,7 +8,6 @@ import (
 
 /*
 func freeNetwork(ctx context.Context, n *libvirt.NodeDevice) {
-
 	id := getReqIDFromContext(ctx)
 
 	err := n.Free()
@@ -21,7 +20,6 @@ func freeNetwork(ctx context.Context, n *libvirt.NodeDevice) {
 */
 
 func freeNetworks(ctx context.Context, nets []libvirt.Network) {
-
 	id := getReqIDFromContext(ctx)
 
 	for _, n := range nets {
@@ -31,11 +29,9 @@ func freeNetworks(ctx context.Context, nets []libvirt.Network) {
 		}
 		info.Printf("%sfreed network object\n", id)
 	}
-
 }
 
 func getNumOfNetworks(ctx context.Context, c *libvirt.Connect) (uint32, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	count, err := c.NumOfNetworks()
@@ -49,7 +45,6 @@ func getNumOfNetworks(ctx context.Context, c *libvirt.Connect) (uint32, error) {
 }
 
 func listNetworks(ctx context.Context, c *libvirt.Connect) ([]libvirt.Network, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	// here we acquire only active, persistent and autostarted networks
@@ -66,7 +61,6 @@ func listNetworks(ctx context.Context, c *libvirt.Connect) ([]libvirt.Network, e
 }
 
 func getNetworkName(ctx context.Context, n *libvirt.Network) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	name, err := n.GetName()
@@ -80,7 +74,6 @@ func getNetworkName(ctx context.Context, n *libvirt.Network) (string, error) {
 }
 
 func lookupNetworkByName(ctx context.Context, c *libvirt.Connect, name string) (*libvirt.Network, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	network, err := c.LookupNetworkByName(name)

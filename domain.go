@@ -6,22 +6,22 @@ import (
 	"fmt"
 	"path/filepath"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/libvirt/libvirt-go"
-	"github.com/libvirt/libvirt-go-xml"
+	libvirtxml "github.com/libvirt/libvirt-go-xml"
 )
 
 /* global variable declaration, if any... */
-const domainAffectConfig = "DOMAIN_AFFECT_CONFIG"
-const domainAffectLive = "DOMAIN_AFFECT_LIVE"
-const domainAffectCurrent = "DOMAIN_AFFECT_CURRENT"
+const (
+	domainAffectConfig  = "DOMAIN_AFFECT_CONFIG"
+	domainAffectLive    = "DOMAIN_AFFECT_LIVE"
+	domainAffectCurrent = "DOMAIN_AFFECT_CURRENT"
+)
 
 // https://libvirt.org/formatdomain.html
 
 func getNumOfDomains(ctx context.Context, c *libvirt.Connect) (uint32, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	count, err := c.NumOfDomains()
@@ -35,7 +35,6 @@ func getNumOfDomains(ctx context.Context, c *libvirt.Connect) (uint32, error) {
 }
 
 func destroyAndUndefineDomain(ctx context.Context, c *libvirt.Connect, d *libvirt.Domain, flags libvirt.DomainDestroyFlags) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	isPersistent := isDomainPersistent(ctx, d)
@@ -43,7 +42,6 @@ func destroyAndUndefineDomain(ctx context.Context, c *libvirt.Connect, d *libvir
 
 	if isActive {
 		err := d.DestroyFlags(flags)
-
 		if err != nil {
 			fail.Printf("%sfailed to destroy domain: %s\n", id, err.Error())
 			return false, err
@@ -56,7 +54,6 @@ func destroyAndUndefineDomain(ctx context.Context, c *libvirt.Connect, d *libvir
 		err := d.UndefineFlags(libvirt.DOMAIN_UNDEFINE_MANAGED_SAVE |
 			libvirt.DOMAIN_UNDEFINE_SNAPSHOTS_METADATA |
 			libvirt.DOMAIN_UNDEFINE_NVRAM)
-
 		if err != nil {
 			fail.Printf("%sfailed to undefine domain: %s\n", id, err.Error())
 			return false, err
@@ -69,7 +66,6 @@ func destroyAndUndefineDomain(ctx context.Context, c *libvirt.Connect, d *libvir
 }
 
 func listAllDomainsWithFlags(ctx context.Context, c *libvirt.Connect, flags libvirt.ConnectListAllDomainsFlags) ([]libvirt.Domain, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	var err error
@@ -90,7 +86,6 @@ func listAllDomainsWithFlags(ctx context.Context, c *libvirt.Connect, flags libv
 }
 
 func getDomainUUID(ctx context.Context, d *libvirt.Domain) string {
-
 	id := getReqIDFromContext(ctx)
 
 	uuid, err := d.GetUUIDString()
@@ -104,7 +99,6 @@ func getDomainUUID(ctx context.Context, d *libvirt.Domain) string {
 }
 
 func getDomainName(ctx context.Context, d *libvirt.Domain) string {
-
 	id := getReqIDFromContext(ctx)
 
 	name, err := d.GetName()
@@ -118,7 +112,6 @@ func getDomainName(ctx context.Context, d *libvirt.Domain) string {
 }
 
 func setDomainAutostart(ctx context.Context, d *libvirt.Domain, autoStart bool) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.SetAutostart(autoStart)
@@ -132,7 +125,6 @@ func setDomainAutostart(ctx context.Context, d *libvirt.Domain, autoStart bool) 
 }
 
 func lookupDomainByName(ctx context.Context, c *libvirt.Connect, domain string) (*libvirt.Domain, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	d, err := c.LookupDomainByName(domain)
@@ -146,7 +138,6 @@ func lookupDomainByName(ctx context.Context, c *libvirt.Connect, domain string) 
 }
 
 func destroyDomain(ctx context.Context, d *libvirt.Domain, flags libvirt.DomainDestroyFlags) error {
-
 	id := getReqIDFromContext(ctx)
 
 	c, err := getConnectFromDomain(ctx, d)
@@ -184,7 +175,6 @@ func destroyDomain(ctx context.Context, d *libvirt.Domain, flags libvirt.DomainD
 	}
 
 	for _, p := range pools {
-
 		err := refreshPool(ctx, &p)
 		if err != nil {
 			continue
@@ -226,7 +216,6 @@ func destroyDomain(ctx context.Context, d *libvirt.Domain, flags libvirt.DomainD
 }
 
 func startDomain(ctx context.Context, d *libvirt.Domain) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.Create()
@@ -240,7 +229,6 @@ func startDomain(ctx context.Context, d *libvirt.Domain) error {
 }
 
 func resetDomain(ctx context.Context, d *libvirt.Domain) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.Reset(0)
@@ -254,7 +242,6 @@ func resetDomain(ctx context.Context, d *libvirt.Domain) error {
 }
 
 func shutdownDomain(ctx context.Context, d *libvirt.Domain, flag libvirt.DomainShutdownFlags) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.ShutdownFlags(flag)
@@ -268,7 +255,6 @@ func shutdownDomain(ctx context.Context, d *libvirt.Domain, flag libvirt.DomainS
 }
 
 func rebootDomain(ctx context.Context, d *libvirt.Domain, flag libvirt.DomainRebootFlagValues) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.Reboot(flag)
@@ -282,7 +268,6 @@ func rebootDomain(ctx context.Context, d *libvirt.Domain, flag libvirt.DomainReb
 }
 
 func freeDomains(ctx context.Context, d []libvirt.Domain) {
-
 	id := getReqIDFromContext(ctx)
 
 	for _, e := range d {
@@ -296,7 +281,6 @@ func freeDomains(ctx context.Context, d []libvirt.Domain) {
 }
 
 func freeDomain(ctx context.Context, d *libvirt.Domain) {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.Free()
@@ -308,7 +292,6 @@ func freeDomain(ctx context.Context, d *libvirt.Domain) {
 }
 
 func getDomainsStats(ctx context.Context, c *libvirt.Connect, d []*libvirt.Domain, flags libvirt.DomainStatsTypes) ([]libvirt.DomainStats, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	s, err := c.GetAllDomainStats(d, flags, 0)
@@ -322,7 +305,6 @@ func getDomainsStats(ctx context.Context, c *libvirt.Connect, d []*libvirt.Domai
 }
 
 func isDomainExists(ctx context.Context, c *libvirt.Connect, domain string) bool {
-
 	d, err := lookupDomainByName(ctx, c, domain)
 	if err != nil {
 		return false
@@ -333,7 +315,6 @@ func isDomainExists(ctx context.Context, c *libvirt.Connect, domain string) bool
 }
 
 func isDomainActive(ctx context.Context, d *libvirt.Domain) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	s, err := d.IsActive()
@@ -347,7 +328,6 @@ func isDomainActive(ctx context.Context, d *libvirt.Domain) bool {
 }
 
 func isDomainPersistent(ctx context.Context, d *libvirt.Domain) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	s, err := d.IsPersistent()
@@ -361,7 +341,6 @@ func isDomainPersistent(ctx context.Context, d *libvirt.Domain) bool {
 }
 
 func isDomainUpdated(ctx context.Context, d *libvirt.Domain) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	s, err := d.IsUpdated()
@@ -375,7 +354,6 @@ func isDomainUpdated(ctx context.Context, d *libvirt.Domain) bool {
 }
 
 func isDomainAutostarted(ctx context.Context, d *libvirt.Domain) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	s, err := d.GetAutostart()
@@ -389,7 +367,6 @@ func isDomainAutostarted(ctx context.Context, d *libvirt.Domain) bool {
 }
 
 func getDomainSecurityStatus(ctx context.Context, d *libvirt.Domain) string {
-
 	id := getReqIDFromContext(ctx)
 
 	s, err := d.GetSecurityLabel()
@@ -403,7 +380,6 @@ func getDomainSecurityStatus(ctx context.Context, d *libvirt.Domain) string {
 }
 
 func getDomainHypervisorType(ctx context.Context, d *libvirt.Domain) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	xmlDoc, err := d.GetXMLDesc(0)
@@ -425,7 +401,6 @@ func getDomainHypervisorType(ctx context.Context, d *libvirt.Domain) (string, er
 }
 
 func getNewDomainImageName(ctx context.Context, c *libvirt.Connect, domainName, storagePoolName string) (string, error) {
-
 	pool, err := lookupPoolByName(ctx, c, storagePoolName)
 	if err != nil {
 		return "", err
@@ -448,7 +423,6 @@ func getNewDomainImageName(ctx context.Context, c *libvirt.Connect, domainName, 
 }
 
 func isDomainNameValidAndAvailable(ctx context.Context, c *libvirt.Connect, name string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	if len(name) == 0 {
@@ -458,7 +432,6 @@ func isDomainNameValidAndAvailable(ctx context.Context, c *libvirt.Connect, name
 
 	namePattern := "([0-9a-zA-Z]|-|_)+"
 	ok, err := regexp.Match(namePattern, []byte(name))
-
 	if err != nil {
 		fail.Printf("%snot valid name, should contain only this symbols: (0-9,a-z,A-Z,_,-): %s: %s\n", id, name, err.Error())
 		return false, fmt.Errorf("not valid name, should contain only this symbols: (0-9,a-z,A-Z,_,-): %s: %s", name, err.Error())
@@ -479,7 +452,6 @@ func isDomainNameValidAndAvailable(ctx context.Context, c *libvirt.Connect, name
 }
 
 func prepareXMLforNewDomain(ctx context.Context, c *libvirt.Connect, uuid, name string, vCPU, maxVCPUs int, memory, maxMemory uint, storagePool, network, mac string, vlan uint) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	imagePath, err := getNewDomainImageName(ctx, c, name, storagePool)
@@ -592,8 +564,8 @@ func prepareXMLforNewDomain(ctx context.Context, c *libvirt.Connect, uuid, name 
 	}
 
 	if domCfg.VCPU != nil {
-		domCfg.VCPU.Current = strconv.Itoa(vCPU)
-		domCfg.VCPU.Value = maxVCPUs
+		domCfg.VCPU.Current = uint(vCPU)
+		domCfg.VCPU.Value = uint(maxVCPUs)
 	}
 
 	if domCfg.Devices != nil {
@@ -613,7 +585,7 @@ func prepareXMLforNewDomain(ctx context.Context, c *libvirt.Connect, uuid, name 
 			</disk>
 		*/
 		domCfg.Devices.Disks = []libvirtxml.DomainDisk{
-			libvirtxml.DomainDisk{
+			{
 				Device: "disk",
 				Driver: &libvirtxml.DomainDiskDriver{
 					Name:         "qemu",
@@ -655,7 +627,7 @@ func prepareXMLforNewDomain(ctx context.Context, c *libvirt.Connect, uuid, name 
 			</interface>
 		*/
 		domCfg.Devices.Interfaces = []libvirtxml.DomainInterface{
-			libvirtxml.DomainInterface{
+			{
 				MAC: &libvirtxml.DomainInterfaceMAC{
 					Address: mac,
 				},
@@ -666,7 +638,7 @@ func prepareXMLforNewDomain(ctx context.Context, c *libvirt.Connect, uuid, name 
 				},
 				VLan: &libvirtxml.DomainInterfaceVLan{
 					Tags: []libvirtxml.DomainInterfaceVLanTag{
-						libvirtxml.DomainInterfaceVLanTag{
+						{
 							ID: vlan,
 						},
 					},

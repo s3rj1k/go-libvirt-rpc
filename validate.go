@@ -7,7 +7,6 @@ import (
 )
 
 func validateCreateDomain(ctx context.Context, c *libvirt.Connect, uuid, name string, vCPU int, memory uint, storage, template, network, mac string) (bool, error) {
-
 	ok, err := isUUIDValid(ctx, uuid)
 	if err != nil || !ok {
 		return false, err
@@ -52,7 +51,6 @@ func validateCreateDomain(ctx context.Context, c *libvirt.Connect, uuid, name st
 }
 
 func checkResources(ctx context.Context, c *libvirt.Connect, name string, vCPU int, memory uint, storagePool, network string) (bool, error) {
-
 	ok, err := isDomainNameValidAndAvailable(ctx, c, name)
 	if err != nil || !ok {
 		return false, err

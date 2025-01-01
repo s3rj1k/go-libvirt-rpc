@@ -26,15 +26,16 @@ type guestOsInfoUnmarshal struct {
 }
 
 func guestFileOpen(ctx context.Context, d *libvirt.Domain, path string, mode string) (int, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	type fd struct {
 		Return int `json:"return"`
 	}
 
-	var err error
-	var s fd
+	var (
+		err error
+		s   fd
+	)
 
 	cmd := fmt.Sprintf("{\"execute\": \"guest-file-open\",\"arguments\": {\"path\": \"%s\",\"mode\": \"%s\"}}", path, mode)
 
@@ -54,13 +55,11 @@ func guestFileOpen(ctx context.Context, d *libvirt.Domain, path string, mode str
 }
 
 func guestFileClose(ctx context.Context, d *libvirt.Domain, fd int) error {
-
 	id := getReqIDFromContext(ctx)
 
 	cmd := fmt.Sprintf("{\"execute\": \"guest-file-close\",\"arguments\": {\"handle\": %d}}", fd)
 
 	_, err := qemuAgentCommand(ctx, d, cmd)
-
 	if err != nil {
 		fail.Printf("%sfailed to close file handle inside Guest: %s", id, err.Error())
 	} else {
@@ -71,7 +70,6 @@ func guestFileClose(ctx context.Context, d *libvirt.Domain, fd int) error {
 }
 
 func guestFileRead(ctx context.Context, d *libvirt.Domain, fd int) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	type fileReadRaw struct {
@@ -82,8 +80,10 @@ func guestFileRead(ctx context.Context, d *libvirt.Domain, fd int) (string, erro
 		} `json:"return"`
 	}
 
-	var err error
-	var s fileReadRaw
+	var (
+		err error
+		s   fileReadRaw
+	)
 
 	cmd := fmt.Sprintf("{\"execute\": \"guest-file-read\",\"arguments\": {\"handle\": %d}}", fd)
 
@@ -116,7 +116,6 @@ func guestFileRead(ctx context.Context, d *libvirt.Domain, fd int) (string, erro
 }
 
 func getGuestLinuxLA(ctx context.Context, d *libvirt.Domain) (guestLA, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	fd, err := guestFileOpen(ctx, d, "/proc/loadavg", "r")
@@ -165,7 +164,6 @@ func getGuestLinuxLA(ctx context.Context, d *libvirt.Domain) (guestLA, error) {
 	procSplit := strings.Split(outSplit[3], "/")
 
 	if len(procSplit) == 2 {
-
 		var u uint64
 
 		u, err = strconv.ParseUint(procSplit[0], 10, 64)
@@ -177,14 +175,12 @@ func getGuestLinuxLA(ctx context.Context, d *libvirt.Domain) (guestLA, error) {
 		if err == nil {
 			loadAvg.TotalProcesses = uint(u)
 		}
-
 	}
 
 	return loadAvg, nil
 }
 
 func getGuestLinuxUptime(ctx context.Context, d *libvirt.Domain) (guestUptime, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	var outStruct guestUptime
@@ -232,7 +228,6 @@ func getGuestLinuxUptime(ctx context.Context, d *libvirt.Domain) (guestUptime, e
 }
 
 func getGuestUnixUsers(ctx context.Context, d *libvirt.Domain) ([]guestUser, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	fd, err := guestFileOpen(ctx, d, "/etc/passwd", "r")
@@ -257,16 +252,12 @@ func getGuestUnixUsers(ctx context.Context, d *libvirt.Domain) ([]guestUser, err
 	users := make([]guestUser, 0, len(outSplitNewLine))
 
 	for _, ln := range outSplitNewLine {
-
 		userLineSplit := strings.Split(ln, ":")
 
 		if len(userLineSplit) == 7 {
-
 			uid, err := strconv.ParseUint(userLineSplit[2], 10, 64)
 			if err == nil {
-
 				if uid >= 1000 && uid != 65534 {
-
 					var user guestUser
 
 					user.Name = userLineSplit[0]
@@ -283,15 +274,16 @@ func getGuestUnixUsers(ctx context.Context, d *libvirt.Domain) ([]guestUser, err
 }
 
 func getGuestOsInfo(ctx context.Context, d *libvirt.Domain) (guestOsInfoUnmarshal, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	type guestOsInfoRaw struct {
 		Return guestOsInfoUnmarshal `json:"return"`
 	}
 
-	var err error
-	var s guestOsInfoRaw
+	var (
+		err error
+		s   guestOsInfoRaw
+	)
 
 	rawJSON, err := qemuAgentCommand(ctx, d, "{\"execute\":\"guest-get-osinfo\"}")
 	if err != nil {
@@ -308,7 +300,6 @@ func getGuestOsInfo(ctx context.Context, d *libvirt.Domain) (guestOsInfoUnmarsha
 }
 
 func getGuestTimezone(ctx context.Context, d *libvirt.Domain) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	type timeZoneRaw struct {
@@ -318,9 +309,11 @@ func getGuestTimezone(ctx context.Context, d *libvirt.Domain) (string, error) {
 		} `json:"return"`
 	}
 
-	var err error
-	var s timeZoneRaw
-	var separator string
+	var (
+		err       error
+		s         timeZoneRaw
+		separator string
+	)
 
 	rawJSON, err := qemuAgentCommand(ctx, d, "{\"execute\":\"guest-get-timezone\"}")
 	if err != nil {
@@ -343,7 +336,6 @@ func getGuestTimezone(ctx context.Context, d *libvirt.Domain) (string, error) {
 }
 
 func getGuestHostname(ctx context.Context, d *libvirt.Domain) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	type hostnameRaw struct {
@@ -352,8 +344,10 @@ func getGuestHostname(ctx context.Context, d *libvirt.Domain) (string, error) {
 		} `json:"return"`
 	}
 
-	var err error
-	var s hostnameRaw
+	var (
+		err error
+		s   hostnameRaw
+	)
 
 	rawJSON, err := qemuAgentCommand(ctx, d, "{\"execute\":\"guest-get-host-name\"}")
 	if err != nil {
@@ -370,7 +364,6 @@ func getGuestHostname(ctx context.Context, d *libvirt.Domain) (string, error) {
 }
 
 func getGuestNetworkInfo(ctx context.Context, d *libvirt.Domain) ([]guestNetwork, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	type networkRaw struct {
@@ -395,8 +388,10 @@ func getGuestNetworkInfo(ctx context.Context, d *libvirt.Domain) ([]guestNetwork
 		} `json:"return"`
 	}
 
-	var err error
-	var s networkRaw
+	var (
+		err error
+		s   networkRaw
+	)
 
 	rawJSON, err := qemuAgentCommand(ctx, d, "{\"execute\":\"guest-network-get-interfaces\"}")
 	if err != nil {
@@ -412,7 +407,6 @@ func getGuestNetworkInfo(ctx context.Context, d *libvirt.Domain) ([]guestNetwork
 	networks := make([]guestNetwork, 0, 64)
 
 	for _, net := range s.Return {
-
 		var network guestNetwork
 
 		network.Name = net.Name
@@ -429,7 +423,6 @@ func getGuestNetworkInfo(ctx context.Context, d *libvirt.Domain) ([]guestNetwork
 		ipAddrs := make([]guestNetworkIPAddress, 0, len(net.IPAddresses))
 
 		for _, ip := range net.IPAddresses {
-
 			var ipAddr guestNetworkIPAddress
 
 			ipAddr.IPAddress = ip.IPAddress
@@ -447,16 +440,16 @@ func getGuestNetworkInfo(ctx context.Context, d *libvirt.Domain) ([]guestNetwork
 }
 
 func getGuestPing(ctx context.Context, d *libvirt.Domain) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	type pingRaw struct {
-		Return struct {
-		} `json:"return"`
+		Return struct{} `json:"return"`
 	}
 
-	var err error
-	var s pingRaw
+	var (
+		err error
+		s   pingRaw
+	)
 
 	rawJSON, err := qemuAgentCommand(ctx, d, "{\"execute\":\"guest-ping\"}")
 	if err != nil {
@@ -473,7 +466,6 @@ func getGuestPing(ctx context.Context, d *libvirt.Domain) bool {
 }
 
 func getGuestAgentVersion(ctx context.Context, d *libvirt.Domain) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	type guestInfoRaw struct {
@@ -482,8 +474,10 @@ func getGuestAgentVersion(ctx context.Context, d *libvirt.Domain) (string, error
 		} `json:"return"`
 	}
 
-	var err error
-	var s guestInfoRaw
+	var (
+		err error
+		s   guestInfoRaw
+	)
 
 	// virsh qemu-agent-command DOMAIN '{"execute":"guest-info"}'
 	rawJSON, err := qemuAgentCommand(ctx, d, "{\"execute\":\"guest-info\"}")
@@ -501,7 +495,6 @@ func getGuestAgentVersion(ctx context.Context, d *libvirt.Domain) (string, error
 }
 
 func qemuAgentCommand(ctx context.Context, d *libvirt.Domain, cmd string) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	out, err := d.QemuAgentCommand(cmd, libvirt.DOMAIN_QEMU_AGENT_COMMAND_DEFAULT, 0)
@@ -515,7 +508,6 @@ func qemuAgentCommand(ctx context.Context, d *libvirt.Domain, cmd string) (strin
 }
 
 func isGuestAgentAvailable(ctx context.Context, d *libvirt.Domain) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	// _, _, err := d.GetTime(0)
@@ -535,7 +527,6 @@ func isGuestAgentAvailable(ctx context.Context, d *libvirt.Domain) bool {
 }
 
 func getGuestTime(ctx context.Context, d *libvirt.Domain) (int64, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	time, _, err := d.GetTime(0)
@@ -550,7 +541,6 @@ func getGuestTime(ctx context.Context, d *libvirt.Domain) (int64, error) {
 
 /*
 func setGuestTime(ctx context.Context, d *libvirt.Domain, time int64) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.SetTime(time, 0, libvirt.DOMAIN_TIME_SYNC)
@@ -566,7 +556,6 @@ func setGuestTime(ctx context.Context, d *libvirt.Domain, time int64) error {
 
 /*
 func getGuestOSType(ctx context.Context, d *libvirt.Domain) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	osType, err := d.GetOSType()
@@ -582,7 +571,6 @@ func getGuestOSType(ctx context.Context, d *libvirt.Domain) (string, error) {
 
 /*
 func getGuestHostname(ctx context.Context, d *libvirt.Domain) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	host, err := d.GetHostname(0)
@@ -597,7 +585,6 @@ func getGuestHostname(ctx context.Context, d *libvirt.Domain) (string, error) {
 */
 
 func getGuestFSInfo(ctx context.Context, d *libvirt.Domain) ([]libvirt.DomainFSInfo, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	fs, err := d.GetFSInfo(0)
@@ -611,7 +598,6 @@ func getGuestFSInfo(ctx context.Context, d *libvirt.Domain) ([]libvirt.DomainFSI
 }
 
 func setGuestPassword(ctx context.Context, d *libvirt.Domain, user string, password string) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.SetUserPassword(user, password, 0)

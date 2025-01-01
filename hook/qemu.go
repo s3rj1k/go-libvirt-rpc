@@ -14,7 +14,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/libvirt/libvirt-go-xml"
+	libvirtxml "github.com/libvirt/libvirt-go-xml"
 )
 
 /*
@@ -51,7 +51,6 @@ type netMetadata struct {
 }
 
 func stringToUInteger(s string) (uint, error) {
-
 	i, err := strconv.Atoi(s)
 	if err != nil {
 		log.Println("failed to convert string into integer")
@@ -66,7 +65,6 @@ func uIntegerToString(i uint) string {
 }
 
 func parseMetadataXML(domCfg *libvirtxml.Domain) (netMetadata, error) {
-
 	type Network struct {
 		Type  string `xml:"type,attr"`
 		Value string `xml:",chardata"`
@@ -77,9 +75,11 @@ func parseMetadataXML(domCfg *libvirtxml.Domain) (netMetadata, error) {
 		Network []*Network `xml:"network,omitempty"`
 	}
 
-	var out netMetadata
-	var meta Custom
-	var err error
+	var (
+		out  netMetadata
+		meta Custom
+		err  error
+	)
 
 	if domCfg.Metadata == nil {
 		log.Println("metadata section not found in Domain XML")
@@ -136,7 +136,6 @@ func parseMetadataXML(domCfg *libvirtxml.Domain) (netMetadata, error) {
 }
 
 func validateInterfaceXML(net *libvirtxml.DomainInterface) bool {
-
 	if net.Source == nil {
 		log.Println("not valid network interface, skipping...")
 		return false
@@ -216,7 +215,6 @@ func validateInterfaceXML(net *libvirtxml.DomainInterface) bool {
 }
 
 func parseDomainXML(stdin io.Reader) (*libvirtxml.Domain, error) {
-
 	scanner := bufio.NewScanner(stdin)
 	lines := make([]string, 0)
 
@@ -250,7 +248,6 @@ func parseDomainXML(stdin io.Reader) (*libvirtxml.Domain, error) {
 }
 
 func parseIpRouteOutput(mac string) (string, string, error) {
-
 	out, err := exec.Command("/sbin/ip", "-o", "link").Output()
 	if err != nil {
 		log.Printf("failed to get list of interface(s) link state(s): %s\n", err.Error())
@@ -259,7 +256,6 @@ func parseIpRouteOutput(mac string) (string, string, error) {
 
 	rMAC := fmt.Sprintf("vf\\s(\\d+)\\sMAC\\s%s,", mac)
 	for _, b := range bytes.Split(out, []byte("\n")) {
-
 		ok, err := regexp.Match(rMAC, b)
 		if err != nil {
 			log.Printf("failed to parse \"ip link\" output: %s\n", err.Error())
@@ -284,7 +280,6 @@ func parseIpRouteOutput(mac string) (string, string, error) {
 
 			return string(pf[1]), string(vf[1]), nil
 		}
-
 	}
 
 	log.Printf("failed to parse \"ip link\" output: %s\n", errors.New("no interface found"))
@@ -292,7 +287,6 @@ func parseIpRouteOutput(mac string) (string, string, error) {
 }
 
 func main() {
-
 	if len(os.Args) != 5 {
 		log.Println("incorrect number of arguments provided.")
 		os.Exit(0)
@@ -303,11 +297,9 @@ func main() {
 	// ./qemu ubuntu-16.04 {start} begin -
 	switch os.Args[2] {
 	case "start":
-
 		// ./qemu ubuntu-16.04 start {begin} -
 		switch os.Args[3] {
 		case "begin":
-
 			domCfg, err := parseDomainXML(os.Stdin)
 			if err != nil {
 				os.Exit(0)
@@ -324,13 +316,12 @@ func main() {
 			}
 
 			for _, net := range domCfg.Devices.Interfaces {
-
 				ok := validateInterfaceXML(&net)
 				if !ok {
 					continue
 				}
 
-				var iface = map[string]string{
+				iface := map[string]string{
 					"mac":         "00:00:00:00:00:00",
 					"max_tx_rate": "100",
 					"trust":       "off",
@@ -363,7 +354,6 @@ func main() {
 			}
 
 			for _, iface := range ifaces {
-
 				cmds := make([]string, 0)
 
 				for k, v := range iface {
@@ -390,12 +380,10 @@ func main() {
 					}
 				}
 			}
-
 		// END {begin}
 		default:
 			os.Exit(0)
 		}
-
 	// END {start}
 	default:
 		os.Exit(0)

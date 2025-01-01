@@ -6,7 +6,6 @@ import (
 )
 
 func stringToUInteger(ctx context.Context, s string) (uint, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	i, err := strconv.Atoi(s)
@@ -21,7 +20,6 @@ func stringToUInteger(ctx context.Context, s string) (uint, error) {
 
 /*
 func getStringInBetween(ctx context.Context, str string, start string, end string) (result string) {
-
 	s := strings.Index(str, start)
 	if s == -1 {
 		return ""
@@ -36,7 +34,6 @@ func getStringInBetween(ctx context.Context, str string, start string, end strin
 
 /*
 func shellExec(ctx context.Context, command string) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	out, err := exec.Command("/bin/sh", "-c", command).Output()

@@ -8,11 +8,10 @@ import (
 	"time"
 
 	"github.com/libvirt/libvirt-go"
-	"github.com/libvirt/libvirt-go-xml"
+	libvirtxml "github.com/libvirt/libvirt-go-xml"
 )
 
 func getSnapshotName(ctx context.Context, s *libvirt.DomainSnapshot) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	name, err := s.GetName()
@@ -42,7 +41,6 @@ func listAllDomainSnapshots(ctx context.Context, d *libvirt.Domain) ([]libvirt.D
 */
 
 func getSnapshotParent(ctx context.Context, s *libvirt.DomainSnapshot) (*libvirt.DomainSnapshot, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	parent, err := s.GetParent(0)
@@ -56,7 +54,6 @@ func getSnapshotParent(ctx context.Context, s *libvirt.DomainSnapshot) (*libvirt
 }
 
 func isSnapshotCurrent(ctx context.Context, s *libvirt.DomainSnapshot) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	isCurrent, err := s.IsCurrent(0)
@@ -70,7 +67,6 @@ func isSnapshotCurrent(ctx context.Context, s *libvirt.DomainSnapshot) (bool, er
 }
 
 func freeSnapshot(ctx context.Context, s *libvirt.DomainSnapshot) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := s.Free()
@@ -84,7 +80,6 @@ func freeSnapshot(ctx context.Context, s *libvirt.DomainSnapshot) error {
 }
 
 func countDomainSnapshotsWithFlags(ctx context.Context, d *libvirt.Domain, flags libvirt.DomainSnapshotListFlags) (int, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	count, err := d.SnapshotNum(flags)
@@ -98,7 +93,6 @@ func countDomainSnapshotsWithFlags(ctx context.Context, d *libvirt.Domain, flags
 }
 
 func countDomainSnapshotChildrenWithFlags(ctx context.Context, s *libvirt.DomainSnapshot, flags libvirt.DomainSnapshotListFlags) (int, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	count, err := s.NumChildren(flags)
@@ -112,7 +106,6 @@ func countDomainSnapshotChildrenWithFlags(ctx context.Context, s *libvirt.Domain
 }
 
 func isSnapshotHasFlags(ctx context.Context, d *libvirt.Domain, flags libvirt.DomainSnapshotListFlags, name string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	snapNames, err := d.SnapshotListNames(flags)
@@ -137,7 +130,6 @@ func isSnapshotHasFlags(ctx context.Context, d *libvirt.Domain, flags libvirt.Do
 }
 
 func listDomainSnapshots(ctx context.Context, d *libvirt.Domain) []snapshotInfo {
-
 	id := getReqIDFromContext(ctx)
 
 	// flags := libvirt.DOMAIN_SNAPSHOT_LIST_INTERNAL | libvirt.DOMAIN_SNAPSHOT_LIST_INACTIVE
@@ -151,12 +143,13 @@ func listDomainSnapshots(ctx context.Context, d *libvirt.Domain) []snapshotInfo 
 	snapshotsInfo := make([]snapshotInfo, 0, len(snaps))
 
 	for _, snap := range snaps {
-
-		var err error
-		var isCurrent, isFlag bool
-		var name, parentName string
-		var parent *libvirt.DomainSnapshot
-		var snapshotInfo snapshotInfo
+		var (
+			err               error
+			isCurrent, isFlag bool
+			name, parentName  string
+			parent            *libvirt.DomainSnapshot
+			snapshotInfo      snapshotInfo
+		)
 
 		name, err = getSnapshotName(ctx, &snap)
 		if err != nil {
@@ -179,7 +172,6 @@ func listDomainSnapshots(ctx context.Context, d *libvirt.Domain) []snapshotInfo 
 		snapshotInfo.HasNoParents = isFlag
 
 		if !snapshotInfo.HasNoParents {
-
 			parent, err = getSnapshotParent(ctx, &snap)
 			if err != nil {
 				snapshotInfo.Error = true
@@ -293,7 +285,6 @@ func listDomainSnapshots(ctx context.Context, d *libvirt.Domain) []snapshotInfo 
 }
 
 func prepareXMLForSnapshot(ctx context.Context, d *libvirt.Domain, name string, isInternal bool) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	domain := getDomainName(ctx, d)
@@ -359,7 +350,6 @@ func prepareXMLForSnapshot(ctx context.Context, d *libvirt.Domain, name string, 
 }
 
 func makeDomainSnapshot(ctx context.Context, d *libvirt.Domain, flags libvirt.DomainSnapshotCreateFlags, xml string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	snap, err := d.CreateSnapshotXML(xml, flags)
@@ -371,20 +361,16 @@ func makeDomainSnapshot(ctx context.Context, d *libvirt.Domain, flags libvirt.Do
 	info.Printf("%screated domain snapshot\n", id)
 
 	defer func() {
-
 		err = freeSnapshot(ctx, snap)
-
 		if err != nil {
 			fail.Printf("%sfailed in defer: %s", id, err.Error())
 		}
-
 	}()
 
 	return true, nil
 }
 
 func lookupDomainSnapshotByName(ctx context.Context, d *libvirt.Domain, name string) (*libvirt.DomainSnapshot, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	snap, err := d.SnapshotLookupByName(name, 0)
@@ -398,7 +384,6 @@ func lookupDomainSnapshotByName(ctx context.Context, d *libvirt.Domain, name str
 }
 
 func deleteSnapshot(ctx context.Context, s *libvirt.DomainSnapshot, flags libvirt.DomainSnapshotDeleteFlags) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	err := s.Delete(flags)
@@ -412,7 +397,6 @@ func deleteSnapshot(ctx context.Context, s *libvirt.DomainSnapshot, flags libvir
 }
 
 func revertToSnapshot(ctx context.Context, s *libvirt.DomainSnapshot) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	err := s.RevertToSnapshot(0)
@@ -424,20 +408,16 @@ func revertToSnapshot(ctx context.Context, s *libvirt.DomainSnapshot) (bool, err
 	info.Printf("%sreverted to domain snapshot\n", id)
 
 	defer func() {
-
 		err = freeSnapshot(ctx, s)
-
 		if err != nil {
 			fail.Printf("%sfailed in defer: %s", id, err.Error())
 		}
-
 	}()
 
 	return true, nil
 }
 
 func blockCommitActive(ctx context.Context, d *libvirt.Domain, disk string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.BlockCommit(disk, "", "", 0, libvirt.DOMAIN_BLOCK_COMMIT_ACTIVE|libvirt.DOMAIN_BLOCK_COMMIT_SHALLOW)
@@ -451,7 +431,6 @@ func blockCommitActive(ctx context.Context, d *libvirt.Domain, disk string) (boo
 }
 
 func blockCommitActivePivot(ctx context.Context, d *libvirt.Domain, disk string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.BlockJobAbort(disk, libvirt.DOMAIN_BLOCK_JOB_ABORT_PIVOT|libvirt.DOMAIN_BLOCK_JOB_ABORT_ASYNC)
@@ -465,7 +444,6 @@ func blockCommitActivePivot(ctx context.Context, d *libvirt.Domain, disk string)
 }
 
 func isDomainBlockJobRunning(ctx context.Context, d *libvirt.Domain) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	isActive := isDomainActive(ctx, d)
@@ -506,7 +484,6 @@ func isDomainBlockJobRunning(ctx context.Context, d *libvirt.Domain) (bool, erro
 }
 
 func isDomainBlockHasActiveExternalBackupSnashot(ctx context.Context, d *libvirt.Domain) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	paths, err := getDomainBlockDeviceNamesOrPaths(ctx, d, true)
@@ -535,7 +512,6 @@ func isDomainBlockHasActiveExternalBackupSnashot(ctx context.Context, d *libvirt
 }
 
 func waitBlockCommitActive(ctx context.Context, d *libvirt.Domain, disk string) bool {
-
 	id := getReqIDFromContext(ctx)
 
 	t := time.Now()
@@ -543,7 +519,6 @@ func waitBlockCommitActive(ctx context.Context, d *libvirt.Domain, disk string) 
 	retries = 3
 
 	for {
-
 		if time.Since(t).Seconds() > 60*60*1 {
 			info.Printf("%sstopped waiting for active block job, timeout exceeded\n", id)
 			return false

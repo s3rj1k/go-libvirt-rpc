@@ -12,7 +12,6 @@ import (
 )
 
 func createBackup(ctx context.Context, c *libvirt.Connect, inputFile string) error {
-
 	id := getReqIDFromContext(ctx)
 
 	t := time.Now()
@@ -31,7 +30,6 @@ func createBackup(ctx context.Context, c *libvirt.Connect, inputFile string) err
 }
 
 func deleteTemporaryExternalSnapshot(ctx context.Context, c *libvirt.Connect, paths []string) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := refreshAllStorgePools(ctx, c)
@@ -40,7 +38,6 @@ func deleteTemporaryExternalSnapshot(ctx context.Context, c *libvirt.Connect, pa
 	}
 
 	for _, path := range paths {
-
 		if strings.HasPrefix(path, "/var/lib/libvirt/") &&
 			strings.HasSuffix(path, ".external.snapshot.qcow2") &&
 			!strings.Contains(path, " ") &&

@@ -8,7 +8,6 @@ import (
 )
 
 func getConnectFromDomain(ctx context.Context, d *libvirt.Domain) (*libvirt.Connect, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	c, err := d.DomainGetConnect()
@@ -22,11 +21,12 @@ func getConnectFromDomain(ctx context.Context, d *libvirt.Domain) (*libvirt.Conn
 }
 
 func openConnection(ctx context.Context, flag string) (*libvirt.Connect, error) {
-
 	id := getReqIDFromContext(ctx)
 
-	var c *libvirt.Connect
-	var err error
+	var (
+		c   *libvirt.Connect
+		err error
+	)
 
 	uri := []string{"qemu:///system"}
 
@@ -49,20 +49,17 @@ func openConnection(ctx context.Context, flag string) (*libvirt.Connect, error) 
 }
 
 func closeConnection(ctx context.Context, c *libvirt.Connect) {
-
 	id := getReqIDFromContext(ctx)
 
 	var s string
 
 	if c != nil {
-
 		host, err := getNodeHostname(ctx, c)
 		if err != nil {
 			host = unknown
 		}
 
 		r, err := c.Close()
-
 		if r == -1 {
 			s = "error"
 		} else if r == 0 {
@@ -78,9 +75,7 @@ func closeConnection(ctx context.Context, c *libvirt.Connect) {
 		if err != nil {
 			fail.Printf("%sfailed to close connection: %s\n", id, err.Error())
 		}
-
 	} else {
 		info.Printf("%sno available connection to close\n", id)
 	}
-
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"errors"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 
@@ -11,7 +11,6 @@ import (
 )
 
 func getNodeHostname(ctx context.Context, c *libvirt.Connect) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	var err error
@@ -27,12 +26,11 @@ func getNodeHostname(ctx context.Context, c *libvirt.Connect) (string, error) {
 }
 
 func getNodeUptime(ctx context.Context, c *libvirt.Connect) (uint64, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	var err error
 
-	b, err := ioutil.ReadFile("/proc/uptime")
+	b, err := os.ReadFile("/proc/uptime")
 	if err != nil {
 		return 0, err
 	}
@@ -53,7 +51,6 @@ func getNodeUptime(ctx context.Context, c *libvirt.Connect) (uint64, error) {
 }
 
 func getNodeLibVersion(ctx context.Context, c *libvirt.Connect) (uint32, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	version, err := c.GetLibVersion()
@@ -66,7 +63,6 @@ func getNodeLibVersion(ctx context.Context, c *libvirt.Connect) (uint32, error) 
 }
 
 func getNodeInfo(ctx context.Context, c *libvirt.Connect) (*libvirt.NodeInfo, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	nodeInfo, err := c.GetNodeInfo()

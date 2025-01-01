@@ -10,19 +10,22 @@ import (
 )
 
 /* global variable declaration, if any... */
-const metaTrust = "trust"
-const metaQos = "qos"
-const metaSpoofChk = "spoofchk"
-const metaQueryRss = "query_rss"
-const metaMaxTxRate = "max_tx_rate"
+const (
+	metaTrust     = "trust"
+	metaQos       = "qos"
+	metaSpoofChk  = "spoofchk"
+	metaQueryRss  = "query_rss"
+	metaMaxTxRate = "max_tx_rate"
+)
 
 /*
 func applyDomainMetadata(ctx context.Context, c *libvirt.Connect, dev netInfo) error {
-
 	id := getReqIDFromContext(ctx)
 
-	var cmd string
-	var err error
+	var (
+		cmd string
+		err error
+	)
 
 	vf := strings.Replace(dev.VFName, "vf", "", -1)
 
@@ -67,7 +70,6 @@ func applyDomainMetadata(ctx context.Context, c *libvirt.Connect, dev netInfo) e
 */
 
 func getDomainMetadata(ctx context.Context, d *libvirt.Domain) (netMetadata, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	type Network struct {
@@ -130,20 +132,20 @@ func getDomainMetadata(ctx context.Context, d *libvirt.Domain) (netMetadata, err
 
 /*
 EXAMPLE:
-  virsh metadata --config --domain ubuntu-16.04 \
-      --uri 1c5537ac-8c84-4313-a8e7-9dd8d45ac7ed \
-      --key my \
-      --set '
-      <custom>
-        <network type="max_tx_rate">100</network>
-        <network type="trust">off</network>
-        <network type="spoofchk">on</network>
-        <network type="query_rss">off</network>
-        <network type="qos">0</network>
-    </custom>'
+
+	virsh metadata --config --domain ubuntu-16.04 \
+	    --uri 1c5537ac-8c84-4313-a8e7-9dd8d45ac7ed \
+	    --key my \
+	    --set '
+	    <custom>
+	      <network type="max_tx_rate">100</network>
+	      <network type="trust">off</network>
+	      <network type="spoofchk">on</network>
+	      <network type="query_rss">off</network>
+	      <network type="qos">0</network>
+	  </custom>'
 */
 func setDomainMetadataNetworkRate(ctx context.Context, d *libvirt.Domain, rate uint) (bool, error) {
-
 	// Achtung: only for domain in shutdown state!
 
 	id := getReqIDFromContext(ctx)
@@ -163,8 +165,10 @@ func setDomainMetadataNetworkRate(ctx context.Context, d *libvirt.Domain, rate u
 		Network []*Network `xml:"network,omitempty"`
 	}
 
-	var custom Custom
-	var maxTxRate, trust, spoofChk, queryRss, qos Network
+	var (
+		custom                                    Custom
+		maxTxRate, trust, spoofChk, queryRss, qos Network
+	)
 
 	meta, err := getDomainMetadata(ctx, d)
 	if err != nil {

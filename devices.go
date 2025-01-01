@@ -7,12 +7,11 @@ import (
 	"time"
 
 	"github.com/libvirt/libvirt-go"
-	"github.com/libvirt/libvirt-go-xml"
+	libvirtxml "github.com/libvirt/libvirt-go-xml"
 )
 
 /*
 func getNodeDeviceParent(ctx context.Context, c *libvirt.Connect, dev *libvirt.NodeDevice) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	parent, err := dev.GetParent()
@@ -28,7 +27,6 @@ func getNodeDeviceParent(ctx context.Context, c *libvirt.Connect, dev *libvirt.N
 
 /*
 func getNodeDeviceName(ctx context.Context, c *libvirt.Connect, dev *libvirt.NodeDevice) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	name, err := dev.GetName()
@@ -43,7 +41,6 @@ func getNodeDeviceName(ctx context.Context, c *libvirt.Connect, dev *libvirt.Nod
 */
 
 func listNodeNetworkDevices(ctx context.Context, c *libvirt.Connect) ([]libvirt.NodeDevice, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	devs, err := c.ListAllNodeDevices(libvirt.CONNECT_LIST_NODE_DEVICES_CAP_NET)
@@ -62,7 +59,6 @@ func listNodeNetworkDevices(ctx context.Context, c *libvirt.Connect) ([]libvirt.
 }
 
 func detachNodeDeviceWithFlags(ctx context.Context, d *libvirt.Domain, xml string, flags libvirt.DomainDeviceModifyFlags) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.DetachDeviceFlags(xml, flags)
@@ -78,7 +74,6 @@ func detachNodeDeviceWithFlags(ctx context.Context, d *libvirt.Domain, xml strin
 }
 
 func attachNodeDeviceWithFlags(ctx context.Context, d *libvirt.Domain, xml string, flags libvirt.DomainDeviceModifyFlags) error {
-
 	id := getReqIDFromContext(ctx)
 
 	err := d.AttachDeviceFlags(xml, flags)
@@ -94,7 +89,6 @@ func attachNodeDeviceWithFlags(ctx context.Context, d *libvirt.Domain, xml strin
 }
 
 func lookupNodeDeviceByName(ctx context.Context, c *libvirt.Connect, devID string) (*libvirt.NodeDevice, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	dev, err := c.LookupDeviceByName(devID)
@@ -108,7 +102,6 @@ func lookupNodeDeviceByName(ctx context.Context, c *libvirt.Connect, devID strin
 }
 
 func freeNodeDevice(ctx context.Context, n *libvirt.NodeDevice) {
-
 	id := getReqIDFromContext(ctx)
 
 	err := n.Free()
@@ -120,7 +113,6 @@ func freeNodeDevice(ctx context.Context, n *libvirt.NodeDevice) {
 }
 
 func freeNodeDevices(ctx context.Context, devs []libvirt.NodeDevice) {
-
 	id := getReqIDFromContext(ctx)
 
 	for _, dev := range devs {
@@ -130,11 +122,9 @@ func freeNodeDevices(ctx context.Context, devs []libvirt.NodeDevice) {
 		}
 		info.Printf("%sfreed node device object\n", id)
 	}
-
 }
 
 func getNodePCIDevicePath(ctx context.Context, c *libvirt.Connect, devName string) string {
-
 	id := getReqIDFromContext(ctx)
 
 	var err error
@@ -165,7 +155,6 @@ func getNodePCIDevicePath(ctx context.Context, c *libvirt.Connect, devName strin
 }
 
 func getDomainBlockDeviceNamesOrPaths(ctx context.Context, d *libvirt.Domain, getPath bool) ([]string, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	var disks, paths []string

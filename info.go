@@ -9,9 +9,10 @@ import (
 )
 
 func getNodeInfoResponse(ctx context.Context, c *libvirt.Connect) (NodeInfoResponse, error) {
-
-	var r NodeInfoResponse
-	var err error
+	var (
+		r   NodeInfoResponse
+		err error
+	)
 
 	r.Timestamp = time.Now().Unix()
 	r.Hostname, err = getNodeHostname(ctx, c)
@@ -82,7 +83,6 @@ func getNodeInfoResponse(ctx context.Context, c *libvirt.Connect) (NodeInfoRespo
 	}
 
 	for _, net := range networks {
-
 		var network nodeNetwork
 
 		network.Name, err = getNetworkName(ctx, &net)
@@ -115,7 +115,6 @@ func getNodeInfoResponse(ctx context.Context, c *libvirt.Connect) (NodeInfoRespo
 	}
 
 	for _, pool := range pools {
-
 		var poolDef nodePool
 
 		poolDef.Name, err = getPoolName(ctx, &pool)
@@ -188,9 +187,10 @@ func getNodeInfoResponse(ctx context.Context, c *libvirt.Connect) (NodeInfoRespo
 }
 
 func getDomainInfoResponse(ctx context.Context, s libvirt.DomainStats) InfoResponse {
-
-	var r InfoResponse
-	var err error
+	var (
+		r   InfoResponse
+		err error
+	)
 
 	c, err := getConnectFromDomain(ctx, s.Domain)
 	defer closeConnection(ctx, c)
@@ -339,12 +339,10 @@ func getDomainInfoResponse(ctx context.Context, s libvirt.DomainStats) InfoRespo
 }
 
 func getQemuAgentInfoResponse(ctx context.Context, d *libvirt.Domain) QemuAgentResponse {
-
 	var r QemuAgentResponse
 
 	r.Available = isGuestAgentAvailable(ctx, d)
 	if r.Available {
-
 		version, err := getGuestAgentVersion(ctx, d)
 		if err == nil {
 			r.AgentVersion = version
@@ -371,7 +369,6 @@ func getQemuAgentInfoResponse(ctx context.Context, d *libvirt.Domain) QemuAgentR
 
 		osInfo, err := getGuestOsInfo(ctx, d)
 		if err == nil {
-
 			var os guestOsInfo
 
 			os.ID = osInfo.ID
@@ -415,14 +412,12 @@ func getQemuAgentInfoResponse(ctx context.Context, d *libvirt.Domain) QemuAgentR
 		if err != nil {
 			r.Uptime = guestUptime{}
 		}
-
 	}
 
 	return r
 }
 
 func getDomainsInfoResponse(ctx context.Context, stats []libvirt.DomainStats, length int) []InfoResponse {
-
 	r := make([]InfoResponse, 0, length) // 256 is actual libvirt limit for domains on single hypervisor
 
 	for _, stat := range stats {
@@ -434,28 +429,28 @@ func getDomainsInfoResponse(ctx context.Context, stats []libvirt.DomainStats, le
 }
 
 func getDomainStateStatus(ctx context.Context, s *libvirt.DomainStatsState) (string, string) {
-
 	if s == nil {
 		return "", ""
 	}
 
-	const domainBlockedUnknown = "DOMAIN_BLOCKED_UNKNOWN"
-	const domainStateUnknown = "DOMAIN_STATE_UNKNOWN"
-	const domainReasonUnknown = "DOMAIN_REASON_UNKNOWN"
-	const domainNoStateUnknown = "DOMAIN_NOSTATE_UNKNOWN"
-	const domainRunningUnknown = "DOMAIN_RUNNING_UNKNOWN"
-	const domainPmSuspendedUnknown = "DOMAIN_PMSUSPENDED_UNKNOWN"
-	const domainPausedUnknown = "DOMAIN_PAUSED_UNKNOWN"
-	const domainCrashedUnknown = "DOMAIN_CRASHED_UNKNOWN"
-	const domainShutoffUnknown = "DOMAIN_SHUTOFF_UNKNOWN"
-	const domainShutdownUnknown = "DOMAIN_SHUTDOWN_UNKNOWN"
+	const (
+		domainBlockedUnknown     = "DOMAIN_BLOCKED_UNKNOWN"
+		domainStateUnknown       = "DOMAIN_STATE_UNKNOWN"
+		domainReasonUnknown      = "DOMAIN_REASON_UNKNOWN"
+		domainNoStateUnknown     = "DOMAIN_NOSTATE_UNKNOWN"
+		domainRunningUnknown     = "DOMAIN_RUNNING_UNKNOWN"
+		domainPmSuspendedUnknown = "DOMAIN_PMSUSPENDED_UNKNOWN"
+		domainPausedUnknown      = "DOMAIN_PAUSED_UNKNOWN"
+		domainCrashedUnknown     = "DOMAIN_CRASHED_UNKNOWN"
+		domainShutoffUnknown     = "DOMAIN_SHUTOFF_UNKNOWN"
+		domainShutdownUnknown    = "DOMAIN_SHUTDOWN_UNKNOWN"
+	)
 
 	var strState, strReason string
 	structState := s.State
 
 	if s.StateSet {
 		switch structState {
-
 		case libvirt.DOMAIN_NOSTATE:
 			strState = "DOMAIN_NOSTATE"
 			if s.ReasonSet {
@@ -469,7 +464,6 @@ func getDomainStateStatus(ctx context.Context, s *libvirt.DomainStatsState) (str
 			} else {
 				strReason = domainNoStateUnknown
 			}
-
 		case libvirt.DOMAIN_RUNNING:
 			strState = "DOMAIN_RUNNING"
 			if s.ReasonSet {
@@ -503,7 +497,6 @@ func getDomainStateStatus(ctx context.Context, s *libvirt.DomainStatsState) (str
 			} else {
 				strReason = domainRunningUnknown
 			}
-
 		case libvirt.DOMAIN_BLOCKED:
 			strState = "DOMAIN_BLOCKED"
 			if s.ReasonSet {
@@ -517,7 +510,6 @@ func getDomainStateStatus(ctx context.Context, s *libvirt.DomainStatsState) (str
 			} else {
 				strReason = domainBlockedUnknown
 			}
-
 		case libvirt.DOMAIN_PAUSED:
 			strState = "DOMAIN_PAUSED"
 			if s.ReasonSet {
@@ -557,7 +549,6 @@ func getDomainStateStatus(ctx context.Context, s *libvirt.DomainStatsState) (str
 			} else {
 				strReason = domainPausedUnknown
 			}
-
 		case libvirt.DOMAIN_SHUTDOWN:
 			strState = "DOMAIN_SHUTDOWN"
 			if s.ReasonSet {
@@ -573,7 +564,6 @@ func getDomainStateStatus(ctx context.Context, s *libvirt.DomainStatsState) (str
 			} else {
 				strReason = domainShutdownUnknown
 			}
-
 		case libvirt.DOMAIN_CRASHED:
 			strState = "DOMAIN_CRASHED"
 			if s.ReasonSet {
@@ -589,7 +579,6 @@ func getDomainStateStatus(ctx context.Context, s *libvirt.DomainStatsState) (str
 			} else {
 				strReason = domainCrashedUnknown
 			}
-
 		case libvirt.DOMAIN_PMSUSPENDED:
 			strState = "DOMAIN_PMSUSPENDED"
 			if s.ReasonSet {
@@ -603,7 +592,6 @@ func getDomainStateStatus(ctx context.Context, s *libvirt.DomainStatsState) (str
 			} else {
 				strReason = domainPmSuspendedUnknown
 			}
-
 		case libvirt.DOMAIN_SHUTOFF:
 			strState = "DOMAIN_SHUTOFF"
 			if s.ReasonSet {
@@ -631,12 +619,10 @@ func getDomainStateStatus(ctx context.Context, s *libvirt.DomainStatsState) (str
 			} else {
 				strReason = domainShutoffUnknown
 			}
-
 		default:
 			strState = domainStateUnknown
 			strReason = domainReasonUnknown
 		}
-
 	} else {
 		strState = domainStateUnknown
 		strReason = domainReasonUnknown

@@ -10,20 +10,17 @@ import (
 )
 
 func lz4Compress(ctx context.Context, inputFile, outputFile string) (string, error) {
-
 	id := getReqIDFromContext(ctx)
 
-	var blockMaxSizeDefault = 4 << 20
+	blockMaxSizeDefault := 4 << 20
 
 	fmt.Println(blockMaxSizeDefault)
 
 	zw := lz4.NewWriter(nil)
 	zh := lz4.Header{
-		BlockDependency: false,
-		BlockChecksum:   false,
-		BlockMaxSize:    blockMaxSizeDefault,
-		NoChecksum:      false,
-		HighCompression: false,
+		BlockChecksum: false,
+		BlockMaxSize:  blockMaxSizeDefault,
+		NoChecksum:    false,
 	}
 
 	in, err := os.Open(inputFile)

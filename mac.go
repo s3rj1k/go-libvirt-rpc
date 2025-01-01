@@ -9,7 +9,6 @@ import (
 )
 
 func genMAC(ctx context.Context) string {
-
 	id := getReqIDFromContext(ctx)
 
 	b := make([]byte, 6)
@@ -27,7 +26,6 @@ func genMAC(ctx context.Context) string {
 }
 
 func isMACvalid(ctx context.Context, mac string) (bool, error) {
-
 	id := getReqIDFromContext(ctx)
 
 	if !strings.HasPrefix(mac, "52:54:00") {

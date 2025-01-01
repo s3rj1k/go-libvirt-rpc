@@ -36,7 +36,6 @@ func logger() zenrpc.MiddlewareFunc {
 		return func(ctx context.Context, method string, params json.RawMessage) zenrpc.Response {
 			start, ip := time.Now(), "<nil>"
 			if req, ok := zenrpc.RequestFromContext(ctx); ok && req != nil {
-
 				var in bytes.Buffer
 
 				ip = req.RemoteAddr

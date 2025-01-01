@@ -51,7 +51,6 @@ func (as JRPCService) ListLocks(ctx context.Context) []string {
 
 // HypervisorInfo - acquires info from hypervisor
 func (as JRPCService) HypervisorInfo(ctx context.Context) (NodeInfoResponse, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, "Local Hypervisor", 10)
 	if isLocked {
 		return NodeInfoResponse{}, errors.New("thread safety lock, function is temporarily unavailable")
@@ -73,7 +72,6 @@ func (as JRPCService) HypervisorInfo(ctx context.Context) (NodeInfoResponse, err
 
 // RefreshAllStorgePools - refreshes usage statistics for all directory based storage pools
 func (as JRPCService) RefreshAllStorgePools(ctx context.Context) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, "Local Hypervisor", 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -95,7 +93,6 @@ func (as JRPCService) RefreshAllStorgePools(ctx context.Context) (bool, error) {
 
 // Info - acquires metric(s) and info from single domain
 func (as JRPCService) Info(ctx context.Context, Domain string) (InfoResponse, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return InfoResponse{}, errors.New("thread safety lock, function is temporarily unavailable")
@@ -137,7 +134,6 @@ func (as JRPCService) Info(ctx context.Context, Domain string) (InfoResponse, er
 
 // QemuAgentInfo - refreshes usage statistics for all directory based storage pools
 func (as JRPCService) QemuAgentInfo(ctx context.Context, Domain string) (QemuAgentResponse, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return QemuAgentResponse{}, errors.New("thread safety lock, function is temporarily unavailable")
@@ -175,7 +171,6 @@ func (as JRPCService) QemuAgentInfo(ctx context.Context, Domain string) (QemuAge
 
 // Domains - acquires list of domains
 func (as JRPCService) Domains(ctx context.Context, Search string) ([]string, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, "Local Hypervisor", 10)
 	if isLocked {
 		return []string{}, errors.New("thread safety lock, function is temporarily unavailable")
@@ -219,7 +214,6 @@ func (as JRPCService) Domains(ctx context.Context, Search string) ([]string, err
 
 // SetPVIDForNetworkDevice - sets PVID for hostdev network device, triggers device remove-attach cycle
 func (as JRPCService) SetPVIDForNetworkDevice(ctx context.Context, Domain string, MAC string, PVID uint) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -255,7 +249,6 @@ func (as JRPCService) SetPVIDForNetworkDevice(ctx context.Context, Domain string
 
 // SetNetworkSpeed - sets spped for all hostdev network devices bound to specified domain
 func (as JRPCService) SetNetworkSpeed(ctx context.Context, Domain string, Speed uint) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -291,7 +284,6 @@ func (as JRPCService) SetNetworkSpeed(ctx context.Context, Domain string, Speed 
 
 // SetPassword - sets user password inside domain using Guest Agent
 func (as JRPCService) SetPassword(ctx context.Context, Domain string, VMUser string, VMPassword string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -327,7 +319,6 @@ func (as JRPCService) SetPassword(ctx context.Context, Domain string, VMUser str
 
 // SetMemory - sets current available memory [KiB] for domain
 func (as JRPCService) SetMemory(ctx context.Context, Domain string, Memory uint64) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -363,7 +354,6 @@ func (as JRPCService) SetMemory(ctx context.Context, Domain string, Memory uint6
 
 // SetMemoryStatsPeriod - sets period of memory stats collection for domain in seconds
 func (as JRPCService) SetMemoryStatsPeriod(ctx context.Context, Domain string, Period int) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -399,7 +389,6 @@ func (as JRPCService) SetMemoryStatsPeriod(ctx context.Context, Domain string, P
 
 // SetMaxMemory - sets maximum available memory [KiB] for domain
 func (as JRPCService) SetMaxMemory(ctx context.Context, Domain string, Memory uint64) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -440,7 +429,6 @@ func (as JRPCService) SetMaxMemory(ctx context.Context, Domain string, Memory ui
 
 // SetVCPUs - sets current available vCPUs for domain
 func (as JRPCService) SetVCPUs(ctx context.Context, Domain string, VCPUsNum uint) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -476,7 +464,6 @@ func (as JRPCService) SetVCPUs(ctx context.Context, Domain string, VCPUsNum uint
 
 // SetMaxVCPUs - sets maximum available vCPUs for domain
 func (as JRPCService) SetMaxVCPUs(ctx context.Context, Domain string, VCPUsNum uint) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -517,7 +504,6 @@ func (as JRPCService) SetMaxVCPUs(ctx context.Context, Domain string, VCPUsNum u
 
 // SetDomainSchedulerCPUShares - sets scheduler CPU shares for domain
 func (as JRPCService) SetDomainSchedulerCPUShares(ctx context.Context, Domain string, CPUShares uint64) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -553,7 +539,6 @@ func (as JRPCService) SetDomainSchedulerCPUShares(ctx context.Context, Domain st
 
 // SetDomainDeviceIOPS - sets block device RW IOPS for domain, virsh help blkdeviotune
 func (as JRPCService) SetDomainDeviceIOPS(ctx context.Context, Domain string, Device string, Read uint64, Write uint64) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -589,7 +574,6 @@ func (as JRPCService) SetDomainDeviceIOPS(ctx context.Context, Domain string, De
 
 // SetAutostart - sets autostart action for domain
 func (as JRPCService) SetAutostart(ctx context.Context, Domain string, Autostart bool) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -625,7 +609,6 @@ func (as JRPCService) SetAutostart(ctx context.Context, Domain string, Autostart
 
 // Reboot - restarts domain
 func (as JRPCService) Reboot(ctx context.Context, Domain string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -661,7 +644,6 @@ func (as JRPCService) Reboot(ctx context.Context, Domain string) (bool, error) {
 
 // Shutdown - shutdowns domain
 func (as JRPCService) Shutdown(ctx context.Context, Domain string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -697,7 +679,6 @@ func (as JRPCService) Shutdown(ctx context.Context, Domain string) (bool, error)
 
 // Reset - resets domain
 func (as JRPCService) Reset(ctx context.Context, Domain string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -733,7 +714,6 @@ func (as JRPCService) Reset(ctx context.Context, Domain string) (bool, error) {
 
 // Start - starts domain
 func (as JRPCService) Start(ctx context.Context, Domain string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -769,7 +749,6 @@ func (as JRPCService) Start(ctx context.Context, Domain string) (bool, error) {
 
 // Destroy - destroys domain
 func (as JRPCService) Destroy(ctx context.Context, Domain string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -818,7 +797,6 @@ func (as JRPCService) Destroy(ctx context.Context, Domain string) (bool, error) 
 
 // MakeSnapshot - makes snapshot of not active (shutdown) domain
 func (as JRPCService) MakeSnapshot(ctx context.Context, Domain string, Name string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -874,7 +852,6 @@ func (as JRPCService) MakeSnapshot(ctx context.Context, Domain string, Name stri
 
 // RemoveSnapshot - deletes snapshot of not active (shutdown) domain
 func (as JRPCService) RemoveSnapshot(ctx context.Context, Domain string, Name string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -916,15 +893,12 @@ func (as JRPCService) RemoveSnapshot(ctx context.Context, Domain string, Name st
 	s, err := lookupDomainSnapshotByName(ctx, d, Name)
 
 	defer func() {
-
 		id := getReqIDFromContext(ctx)
 
 		err = freeSnapshot(ctx, s)
-
 		if err != nil {
 			fail.Printf("%sfailed in defer: %s", id, err.Error())
 		}
-
 	}()
 
 	if err != nil || s == nil {
@@ -941,7 +915,6 @@ func (as JRPCService) RemoveSnapshot(ctx context.Context, Domain string, Name st
 
 // RevertToSnapshot - reverts not active domain to specified snapshot
 func (as JRPCService) RevertToSnapshot(ctx context.Context, Domain string, Name string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -1027,7 +1000,6 @@ manually pivot disk after successful 1st stage of block commit, need only for AP
 
 // MakeBackup - makes backup using external snapshot and blockcommit for active domain
 func (as JRPCService) MakeBackup(ctx context.Context, Domain string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, Domain, 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -1106,7 +1078,6 @@ func (as JRPCService) MakeBackup(ctx context.Context, Domain string) (bool, erro
 	}
 
 	for _, disk := range disks {
-
 		ok, err := blockCommitActive(ctx, d, disk)
 		if err != nil || !ok {
 			return false, err
@@ -1142,7 +1113,6 @@ func (as JRPCService) MakeBackup(ctx context.Context, Domain string) (bool, erro
 
 // CloneImage - clones image from (left) volume name to new (right) volume name inside storage pool specified by name
 func (as JRPCService) CloneImage(ctx context.Context, Storage, LeftImageName, RightImageName string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, fmt.Sprintf("%s|%s", Storage, LeftImageName), 60)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
@@ -1169,7 +1139,6 @@ func (as JRPCService) CloneImage(ctx context.Context, Storage, LeftImageName, Ri
 
 // Create - creates new domain with supplied configuration
 func (as JRPCService) Create(ctx context.Context, UUID, Name string, VCPU int, Memory uint, Storage, Template, Network, MAC string, VLAN uint) (bool, error) {
-
 	maxMemory := 2 * Memory
 	maxVcpus := 16
 
@@ -1225,7 +1194,6 @@ func (as JRPCService) Create(ctx context.Context, UUID, Name string, VCPU int, M
 
 // CheckResources - checks if requested resources available on hypervisor
 func (as JRPCService) CheckResources(ctx context.Context, Name string, VCPU int, Memory uint, Storage, Network string) (bool, error) {
-
 	isLocked := isLockedAndMakeLock(ctx, "Local Hypervisor", 10)
 	if isLocked {
 		return false, errors.New("thread safety lock, function is temporarily unavailable")
